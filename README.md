@@ -1,6 +1,5 @@
 # Retail-Gasoline-Price-Analysis
-## ECE143 Final Project
-## Team 1
+## ECE143 Final Project - Team 1
 
 ## Problem:
 Analyze the behaviors of gasoline price fluctuations in different regions of the US (from 1993 until now), and interpret the results to across population, geographic location, and availability of petroleum. 
