@@ -78,18 +78,27 @@ def dict2df(dic):
 Region = ['East', 'Midwest', 'GC', 'RM', 'WC']
 price_url = 'https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=PET&s=EMM_EPM0_PTE_R10_DPG&f=W'
 import_url = 'https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=PET&s=WTTIM_R10-Z00_2&f=W'
+stock_url = 'https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=PET&s=WCESTP11&f=W'
 if __name__ == "__main__":
     gas_price = {}
-    price_dict, import_dict  = {}, {}
+    price_dict, import_dict, stock_dict  = {}, {}, {}
     for i, r in enumerate(Region):
         price_dict[r] = price_url.replace('10', '%d') %(10*(i+1))
         import_dict[r] = import_url.replace('10', '%d') %(10*(i+1))
+        stock_dict[r] = stock_url.replace('11', '%d') %(10*(i+1) + 1)
     df_price = dict2df(price_dict)
     df_import = dict2df(import_dict)
-#    url_import = "https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=PET&s=WTTIMUS2&f=W"
-#    import_ = url2df(url_import, 'import')
+    df_stock = dict2df(stock_dict)
+    
     price_fig = df_price.plot.line().get_figure()
     import_fig = df_import.plot.line().get_figure()
+    stock_fig = df_stock.plot.line().get_figure()
     price_fig.savefig('price.png')
     import_fig.savefig('import.png')
+    
+    
+    price_array = df_price.values
+#    plt.figure()
+#    plt.scatter(range(1350), price_array[:, 0])
+    import_array = df_import.values
     
