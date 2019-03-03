@@ -212,7 +212,7 @@ def downsample(df, start_year, end_year):
     Return:
         df_price_down: (pandas.dataframe)
     '''
-    df.index = pd.to_datetime(df.index)
+    # df.index = pd.to_datetime(df.index)
     df_tmp = df_price.groupby(df.index.year).transform('mean')
     df_price_down = df_tmp.iloc[(df_tmp.index.month == 2) & (df_tmp.index.year >= start_year) & (df_tmp.index.year <= end_year)]
     return df_price_down
@@ -266,10 +266,16 @@ if __name__ == "__main__":
     
     # price_fig = df_price.rolling(12).mean().plot.line().get_figure()#1993~Apr, 2019~Feb
     price_fig = df_price.rolling(12).mean().plot.line(title= 'Retail Gas Price v.s. Time')
+    df_price.index = pd.to_datetime(df_price.index)
+    positions = [p.year for p in df_price.index if p.month == 1]
+    price_fig.set_xticklabels(positions)
     price_fig.set_xlabel("Year")
     price_fig.set_ylabel("Gas Price ($)")
     plt.show()
     import_fig = df_import.rolling(12).mean().plot.line(title = 'Import of Crude Oil v.s. Time')
+    df_import.index = pd.to_datetime(df_import.index)
+    positions = [p.year for p in df_import.index if p.month == 1]
+    import_fig.set_xticklabels(positions)
     import_fig.set_xlabel("Year")
     import_fig.set_ylabel("Barrels per Day (k)")
     plt.show() 
@@ -298,10 +304,13 @@ if __name__ == "__main__":
             vehicles = np.vstack((vehicles, new_vehicle))
     df_vehicle = pd.DataFrame(vehicles, columns = [Region], index = year)
     ve_fig = df_vehicle.plot.line(title = 'Vehicles v.s. Time')
+    df_vehicle.index = pd.to_datetime(df_vehicle.index)
+    positions = [p.year for p in df_vehicle.index if p.month == 1]
+    ve_fig.set_xticklabels(positions)    
     ve_fig.set_xlabel("Year")
     ve_fig.set_ylabel("Vehicles")    
     plt.show()    
-    df_price_down = downsample(df_price, int(df_vehicle.index[0]), int(df_vehicle.index[-1]))
+    df_price_down = downsample(df_price, int(df_vehicle.index[0].year), int(df_vehicle.index[-1].year))
     vehicle_cor = get_correlate(df_price_down, df_vehicle)    
     print('The correlation of vehicles:', vehicle_cor)
     #build the map
@@ -321,7 +330,7 @@ if __name__ == "__main__":
     coloumn_total = 15
     year = []
     for iter_year in range(9):
-        year.append(2010+iter_year)
+        year.append(str(2010+iter_year))
         for iter_table in range(left, right):
             for iter_region in range(5):
                 if All_states[iter_table-left] in state_regions[iter_region]:
@@ -329,11 +338,14 @@ if __name__ == "__main__":
 
     df_population = pd.DataFrame(population.T, columns = [Region], index = year)
     pop_fig = df_population.plot.line(title = 'Population v.s. Time')
+    df_population.index = pd.to_datetime(df_population.index)
+    positions = [p.year for p in df_population.index if p.month == 1]
+    pop_fig.set_xticklabels(positions)    
     pop_fig.set_xlabel("Year")
     pop_fig.set_ylabel("Population")
     plt.show()    
-    df_price_down = downsample(df_price, int(df_population.index[0]), int(df_population.index[-1]))
-
+    df_price_down = downsample(df_price, int(df_population.index[0].year), int(df_population.index[-1].year))
+    print(df_price_down)
     #get correlation
     pop_cor = get_correlate(df_price_down, df_population) 
     print('The correlation of populations:', pop_cor)
