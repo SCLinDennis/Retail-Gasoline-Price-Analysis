@@ -420,8 +420,6 @@ if __name__ == "__main__":
         else:
             positions.append(str(''))
     ve_fig.set_xticks(range(len(positions)))
-
-    ve_fig.set_xticks(range(len(positions)))
     ve_fig.set_xticklabels(positions)    
     ve_fig.set_xlabel("Year")
     ve_fig.set_ylabel("Vehicles (100 millions)")    
