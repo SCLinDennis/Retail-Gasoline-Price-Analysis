@@ -27,6 +27,7 @@ def preprocess(string):
     Return:
         data: (list) 
     '''
+    assert isinstance(string, str)
     string = string.replace(',', '').replace('.', '').replace('NA', '0').split(' ')
     
     return list(filter(lambda a: a != '', string))
@@ -40,6 +41,8 @@ def url2df(url, name):
     Return:
         data: (DataFrame) 
     '''
+    assert isinstance(url, str)
+    assert isinstance(name, str)
     html_doc = pq(url)
     html_doc.contents()
     
@@ -61,6 +64,8 @@ def url2df_im(url, name):
     Return:
         data: (DataFrame) 
     '''
+    assert isinstance(url, str)
+    assert isinstance(name, str)
     html_doc = pq(url)
     html_doc.contents()
     
@@ -83,6 +88,8 @@ def url2np(url, name):
     Return:
         data: (numpy array) 
     '''
+    assert isinstance(url, str)
+    assert isinstance(name, str)
     html_doc = pq(url)
     html_doc.contents()
     
@@ -103,6 +110,7 @@ def dict2df(dic):
     Return: 
         df: (DataFrame)
     '''
+    assert isinstance(dic, dict)
     df = pd.DataFrame()
     for name, url in dic.items():
         df = pd.concat([df, url2df(url, name)], axis = 1)
@@ -116,12 +124,23 @@ def dict2df_im(dic):
     Return: 
         df: (DataFrame)
     '''
+    assert isinstance(dic, dict)
     df = pd.DataFrame()
     for name, url in dic.items():
         df = pd.concat([df, url2df_im(url, name)], axis = 1)
     return df
 
 def get_correlate(df_price, df_factor):
+    '''
+    Retuen the correlation of two df.dataframe
+    Args:
+        df_price: (pd.DataFrame)
+        df_factor: (pd.DataFrame)
+    Return:
+        coor: (dict)
+    '''
+    assert isinstance(df_price, pd.DataFrame)
+    assert isinstance(df_factor, pd.DataFrame)
     coor = {}
     for i, r in enumerate(Region):
         price_array = normalized(df_price[[r]].values)
@@ -134,7 +153,10 @@ def get_correlate(df_price, df_factor):
 def normalized(numpydata):
     '''
     Normalized the numpy array.
+    Args:
+        numpydata: (nparray)
     '''
+    assert isinstance(numpydata, np.ndarray)
     max_ = np.max(numpydata)
     min_ = np.min(numpydata)
     return (numpydata-min_)/(max_-min_)
@@ -143,6 +165,7 @@ def name_process(array):
     '''
     preprocess the naming conflict between two object
     '''
+    assert isinstance(array, np.ndarray)
     out = []
     for i, region in enumerate(state_regions):
         out.append(array.item().get(region))
@@ -157,6 +180,8 @@ def create_heatmap(coor_dict, cmap, tit):
         cmap: the colormap type
         title: (str) i.e. 'Correlation between price and import in different region'
     '''
+    assert isinstance(coor_dict, dict)
+    assert isinstance(tit, str)
     m = Basemap(llcrnrlon=-119,llcrnrlat=22,urcrnrlon=-64,urcrnrlat=49,
             projection='lcc',lat_1=33,lat_2=45,lon_0=-95)
     m.readshapefile('./shape/st99_d00','states',drawbounds=True)
@@ -208,6 +233,7 @@ def create_corr_map(corr_dict):
     Return:
         corr_map: (dictionary)
     '''
+    assert isinstance(corr_dict, dict)
     corr_map = {}
     for i, region in enumerate(state_regions):
         for state in region:
@@ -224,6 +250,9 @@ def downsample(df, start_year, end_year):
     Return:
         df_price_down: (pandas.dataframe)
     '''
+    assert isinstance(df, pd.DataFrame)
+    assert start_year >= df.index.year[0]
+    assert end_year <= df.index.year[-1]
     # df.index = pd.to_datetime(df.index)
     df_tmp = df_price.groupby(df.index.year).transform('mean')
     df_price_down = df_tmp.iloc[(df_tmp.index.month == 2) & (df_tmp.index.year >= start_year) & (df_tmp.index.year <= end_year)]
@@ -238,6 +267,9 @@ def corr_bar(import_cor,vehicle_cor,pop_cor):
         vehicle:(dictionary)
         
     '''
+    assert isinstance(import_cor, dict)
+    assert isinstance(pop_cor, dict)
+    assert isinstance(vehicle, dict)
     imp_value,vhc_value,pop_value=[],[],[]
     region_name,region_name2,region_name3=[],[],[]
 
