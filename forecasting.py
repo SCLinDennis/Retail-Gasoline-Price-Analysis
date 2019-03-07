@@ -172,11 +172,11 @@ for i in range(60):
 
 closing_price = test
 train = new_data[:300]
-prediction = pd.DataFrame(closing_price, columns= ['prediction'] , index =pd.date_range(start='2018/4/1', periods=60, freq='MS'))
+prediction = pd.DataFrame(closing_price, columns= ['Prediction'] , index =pd.date_range(start='2018/4/1', periods=60, freq='MS'))
 
 plt.figure()
 plt.plot(train)
-plt.plot(prediction)
+plt.plot(prediction['Prediction'])
 plt.title('Gas Price Forecasting')
 plt.xlabel('Year')
 plt.ylabel("Gas Price per gallon ($/gal)")

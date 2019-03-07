@@ -13,13 +13,12 @@ import matplotlib.pyplot as plt
 
 train = pd.read_pickle('./train.pkl')
 prediction = pd.read_pickle('./prediction.pkl')
-train.
-print(train)
 plt.figure()
 plt.plot(train)
-plt.plot(prediction)
+plt.plot(prediction['Prediction'])
 plt.title('Gas Price Forecasting')
 plt.xlabel('Year')
 plt.ylabel("Gas Price per gallon ($/gal)")
+plt.legend()
 plt.show()
 plt.savefig('./forecasting60.png')
