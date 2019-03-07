@@ -173,10 +173,12 @@ if __name__ == "__main__":
     
     closing_price = test
     train = new_data[:300]
+    test = new_data[300:]
     prediction = pd.DataFrame(closing_price, columns= ['Prediction'] , index =pd.date_range(start='2018/4/1', periods=n_predict, freq='MS'))
     
     plt.figure()
     plt.plot(train)
+    plt.plot(test)
     plt.plot(prediction['Prediction'])
     plt.title('Gas Price Forecasting')
     plt.xlabel('Year')

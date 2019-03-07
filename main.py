@@ -269,7 +269,7 @@ def corr_bar(import_cor,vehicle_cor,pop_cor):
     '''
     assert isinstance(import_cor, dict)
     assert isinstance(pop_cor, dict)
-    assert isinstance(vehicle, dict)
+    assert isinstance(vehicle_cor, dict)
     imp_value,vhc_value,pop_value=[],[],[]
     region_name,region_name2,region_name3=[],[],[]
 
@@ -378,12 +378,10 @@ if __name__ == "__main__":
     #plot figure
     
     # price_fig = df_price.plot.line(title = 'Retail Gas Price v.s. Time')#1993~Apr, 2019~Feb
-    price_fig = df_price.rolling(12).mean().plot.line(title= 'Retail Gas Price vs. Time')
+    price_fig = df_price.rolling(12).mean().plot.line(title= 'Retail Gas Price vs. Time', grid = True)
     df_price.index = pd.to_datetime(df_price.index)
     start_year = df_price.index[0].year
-    print(start_year)
     end_year = df_price.index[-1].year
-    print(end_year)
     positions = []
     for p in df_price.index:
         if p.year == start_year and p.month == 1:
@@ -395,14 +393,13 @@ if __name__ == "__main__":
         else:
             positions.append(str(''))
     # positions = [p.year for p in df_price.index if p.month == 1]
-    print(positions)
     price_fig.set_xticks(range(len(positions)))
     price_fig.set_xticklabels(positions)
     price_fig.set_xlabel("Year")
     price_fig.set_ylabel("Gas Price per gallon ($/gal)")
     plt.autoscale()
     plt.show()
-    import_fig = df_import.rolling(12).mean().plot.line(title = 'Imports of Crude Oil vs. Time')
+    import_fig = df_import.rolling(12).mean().plot.line(title = 'Imports of Crude Oil vs. Time', grid = True)
     df_import.index = pd.to_datetime(df_import.index)
     positions = []
     for p in df_import.index:
@@ -443,7 +440,7 @@ if __name__ == "__main__":
         else:
             vehicles = np.vstack((vehicles, new_vehicle))
     df_vehicle = pd.DataFrame(vehicles, columns = Region, index = year).div(10**8)
-    ve_fig = df_vehicle.plot.line(title = 'Vehicle Registrations vs. Time')
+    ve_fig = df_vehicle.plot.line(title = 'Vehicle Registrations vs. Time', grid = True)
     df_vehicle.index = pd.to_datetime(df_vehicle.index)
     positions = []
     for p in df_vehicle.index:         
@@ -483,7 +480,7 @@ if __name__ == "__main__":
                     population[iter_region, iter_year] += int(float(sheet.cell_value(iter_table, 3+iter_year)))
 
     df_population = pd.DataFrame(population.T, columns = Region, index = year).div(10**8)
-    pop_fig = df_population.plot.line(title = 'Population vs. Time')
+    pop_fig = df_population.plot.line(title = 'Population vs. Time', grid = True)
     df_population.index = pd.to_datetime(df_population.index)
     positions = [p.year for p in df_population.index if p.month == 1]
     pop_fig.set_xticklabels(positions)    
