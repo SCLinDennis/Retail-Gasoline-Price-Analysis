@@ -169,8 +169,8 @@ def create_heatmap(coor_dict, cmap, tit):
     for shapedict in m.states_info:
         statename = shapedict['NAME']
         if statename not in ['District of Columbia','Puerto Rico']:
-            pop = coor_dict[statename]
-            colors[statename] = cmap((pop-vmin)/(vmax-vmin))[:3]
+            value = coor_dict[statename]
+            colors[statename] = cmap((value-vmin)/(vmax-vmin))[:3]
         statenames.append(statename)
     ax = plt.gca() # get current axes instance
     fig = plt.gcf()
