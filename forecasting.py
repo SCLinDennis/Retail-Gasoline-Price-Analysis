@@ -177,8 +177,7 @@ if __name__ == "__main__":
     prediction = pd.DataFrame(closing_price, columns= ['Prediction'] , index =pd.date_range(start='2018/4/1', periods=n_predict, freq='MS'))
     
     plt.figure()
-    plt.plot(train)
-    plt.plot(test)
+    plt.plot(new_data)
     plt.plot(prediction['Prediction'])
     plt.title('Gas Price Forecasting')
     plt.xlabel('Year')
