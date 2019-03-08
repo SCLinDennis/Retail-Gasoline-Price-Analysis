@@ -462,7 +462,7 @@ if __name__ == "__main__":
     df_vehicle = load_vehicle(18)
 
     #plot the vehicle figure
-    ve_fig = df_vehicle.plot.line(title = 'Vehicle Registrations vs. Time', grid = True)
+    ve_fig = df_vehicle.plot.line(title = 'Vehicle Registrations vs. Time', grid = True, lw = 2)
     df_vehicle.index = pd.to_datetime(df_vehicle.index)
     positions = []
     for p in df_vehicle.index:         
@@ -470,11 +470,13 @@ if __name__ == "__main__":
             positions.append(str(p.year))
         else:
             positions.append(str(''))
+    box = ve_fig.get_position()
+    ve_fig.set_position([box.x0, box.y0, box.width*0.85, box.height])
     ve_fig.set_xticks(range(len(positions)))
     ve_fig.set_xticklabels(positions)    
     ve_fig.set_xlabel("Year")
     ve_fig.set_ylabel("Vehicles (100 millions)")    
-    ve_fig.grid(axis = 'x')
+    ve_fig.legend(bbox_to_anchor=(1,0.5))
     plt.show()    
     df_price_down = downsample(df_price, int(df_vehicle.index[0].year), int(df_vehicle.index[-1].year))
     
@@ -492,13 +494,15 @@ if __name__ == "__main__":
     df_population = load_population(population_path)
 
     #plot the population data
-    pop_fig = df_population.plot.line(title = 'Population vs. Time', grid = True)
+    pop_fig = df_population.plot.line(title = 'Population vs. Time', grid = True, lw = 2)
     df_population.index = pd.to_datetime(df_population.index)
     positions = [p.year for p in df_population.index if p.month == 1]
+    box = pop_fig.get_position()
+    pop_fig.set_position([box.x0, box.y0, box.width*0.85, box.height])
     pop_fig.set_xticklabels(positions)    
     pop_fig.set_xlabel("Year")
     pop_fig.set_ylabel("Population (100 millions)")
-    pop_fig.grid(axis = 'x')
+    pop_fig.legend(bbox_to_anchor=(1,0.5))
     plt.show()    
     df_price_down = downsample(df_price, int(df_population.index[0].year), int(df_population.index[-1].year))
     
