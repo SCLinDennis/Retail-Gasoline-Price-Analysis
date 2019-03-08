@@ -5,7 +5,6 @@ Created on Mon Feb 11 12:34:00 2019
 
 @author: DennisLin
 """
-#https://docs.google.com/document/d/14yTbyoFJks_aDMtJLcwqm7MG5n-DEk_aJzrVTy8EJUA/edit
 import xlrd
 import matplotlib
 matplotlib.use('TkAgg')   
@@ -17,7 +16,6 @@ from matplotlib.colorbar import ColorbarBase
 from matplotlib.colors import rgb2hex
 from matplotlib.patches import Polygon
 from pyquery import PyQuery as pq
-#%%
 
 def preprocess(string):
     '''
@@ -330,7 +328,43 @@ def corr_bar(import_cor,vehicle_cor,pop_cor):
     autolabel(rects2, "center")
     autolabel(rects3, "center")
     plt.show()
-#%%
+
+def load_vehicle(num_year):  
+    '''
+    load the preprocessed vehicle data
+    '''      
+    year = []
+    for year_i in range(num_year):
+        year.append(str(1997+year_i))
+        npy_file = "./vehicle/dic_{}.npy".format(year_i + 1997)
+        tmp_array = name_process(np.load(npy_file))
+        new_vehicle = np.array(tmp_array).reshape([1, -1]) 
+        if year_i == 0:
+            vehicles = new_vehicle
+        else:
+            vehicles = np.vstack((vehicles, new_vehicle))
+    return pd.DataFrame(vehicles, columns = Region, index = year).div(10**8)
+
+def load_population(path):
+    '''
+    load the population data
+    '''
+    assert isinstance(path, str)
+    wb = xlrd.open_workbook(path) 
+    sheet = wb.sheet_by_index(0) 
+    population = np.zeros((5, 9))    
+    left = 9
+    right = 60
+    coloumn_total = 15
+    year = []
+    for iter_year in range(9):
+        year.append(str(2010+iter_year))
+        for iter_table in range(left, right):
+            for iter_region in range(5):
+                if All_states[iter_table-left] in state_regions[iter_region]:
+                    population[iter_region, iter_year] += int(float(sheet.cell_value(iter_table, 3+iter_year)))
+    return pd.DataFrame(population.T, columns = Region, index = year).div(10**8)
+
 All_states = ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado',
                    'Connecticut', 'Delaware', 'Dist. of Col.', 
                    'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 
@@ -357,10 +391,8 @@ Region = ["East Coast", "Midwest", "Gulf Coast", "Rocky Mountain", "West Coast"]
 price_url = 'https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=PET&s=EMM_EPM0_PTE_R10_DPG&f=W'
 import_url = 'https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=PET&s=WTTIM_R10-Z00_2&f=W'
 stock_url = 'https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=PET&s=WCESTP11&f=W'
-#export_url = 'https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=PET&s=MTTEXP11&f=M'
-#refine_url = 'https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=PET&s=WCRRIP12&f=W'#crude oil input
-num_year = 18
-#%%
+population_path = './population/nst-est2018-01.xlsx'
+
 if __name__ == "__main__":
     gas_price = {}
     price_dict, import_dict, stock_dict, export_dict, refine_dict  = {}, {}, {}, {}, {}
@@ -369,16 +401,12 @@ if __name__ == "__main__":
     for i, r in enumerate(Region):
         price_dict[r] = price_url.replace('10', '%d') %(10*(i+1))
         import_dict[r] = import_url.replace('10', '%d') %(10*(i+1))
-#        stock_dict[r] = stock_url.replace('11', '%d') %(10*(i+1) + 1)
 
     #load url
     df_price = dict2df(price_dict).div(1000)
     df_import = dict2df_im(import_dict)
-#    df_stock = dict2df(stock_dict)
 
-    #plot figure
-    
-    # price_fig = df_price.plot.line(title = 'Retail Gas Price v.s. Time')#1993~Apr, 2019~Feb
+    #plot price figure using rolling mean
     price_fig = df_price.rolling(12).mean().plot.line(title= 'Retail Gas Price vs. Time')
     df_price.index = pd.to_datetime(df_price.index)
     start_year = df_price.index[0].year
@@ -393,13 +421,14 @@ if __name__ == "__main__":
             positions.append(str(p.year))
         else:
             positions.append(str(''))
-    # positions = [p.year for p in df_price.index if p.month == 1]
     price_fig.set_xticks(range(len(positions)))
     price_fig.set_xticklabels(positions)
     price_fig.set_xlabel("Year")
     price_fig.set_ylabel("Gas Price per gallon ($/gal)")
     price_fig.grid(axis = 'y')
     plt.show()
+
+    #plot import figure using rolling mean
     import_fig = df_import.rolling(12).mean().plot.line(title = 'Imports of Crude Oil vs. Time')
     df_import.index = pd.to_datetime(df_import.index)
     positions = []
@@ -418,30 +447,21 @@ if __name__ == "__main__":
     import_fig.set_ylabel("Barrels per day (thousands)")
     import_fig.grid(axis = 'y')
     plt.show() 
-    #save figure    
-    # price_fig.savefig('price.png')
-    # import_fig.savefig('import.png')
     
+    #derive the correlation 
     import_cor = get_correlate(df_price, df_import)
     print('The correlation of import:', import_cor)
-    #%% 
+    
+    #build the correlation map
     import_corr_map = create_corr_map(import_cor)
     title = 'Correlation of \nImports vs. Gas Price'
     create_heatmap(import_corr_map, plt.cm.Oranges, title)
 
     #%%
     #load the vehicles data
-    year = []
-    for year_i in range(num_year):
-        year.append(str(1997+year_i))
-        npy_file = "./vehicle/dic_{}.npy".format(year_i + 1997)
-        tmp_array = name_process(np.load(npy_file))
-        new_vehicle = np.array(tmp_array).reshape([1, -1]) 
-        if year_i == 0:
-            vehicles = new_vehicle
-        else:
-            vehicles = np.vstack((vehicles, new_vehicle))
-    df_vehicle = pd.DataFrame(vehicles, columns = Region, index = year).div(10**8)
+    df_vehicle = load_vehicle(18)
+
+    #plot the vehicle figure
     ve_fig = df_vehicle.plot.line(title = 'Vehicle Registrations vs. Time', grid = True)
     df_vehicle.index = pd.to_datetime(df_vehicle.index)
     positions = []
@@ -457,32 +477,21 @@ if __name__ == "__main__":
     ve_fig.grid(axis = 'x')
     plt.show()    
     df_price_down = downsample(df_price, int(df_vehicle.index[0].year), int(df_vehicle.index[-1].year))
+    
+    #derive the correlation 
     vehicle_cor = get_correlate(df_price_down, df_vehicle)    
     print('The correlation of vehicles:', vehicle_cor)
+
     #build the map
     vehicle_corr_map = create_corr_map(vehicle_cor)
     title = 'Correlation of \nVehicle Registrations vs. Gas Price'
     create_heatmap(vehicle_corr_map, plt.cm.Greens, title)    
     
     #%%
-    #load the populations data
-    
-    loc_pop = ("./population/nst-est2018-01.xlsx") 
-    wb = xlrd.open_workbook(loc_pop) 
-    sheet = wb.sheet_by_index(0) 
-    population = np.zeros((5, 9))    
-    left = 9
-    right = 60
-    coloumn_total = 15
-    year = []
-    for iter_year in range(9):
-        year.append(str(2010+iter_year))
-        for iter_table in range(left, right):
-            for iter_region in range(5):
-                if All_states[iter_table-left] in state_regions[iter_region]:
-                    population[iter_region, iter_year] += int(float(sheet.cell_value(iter_table, 3+iter_year)))
+    #load the populations data    
+    df_population = load_population(population_path)
 
-    df_population = pd.DataFrame(population.T, columns = Region, index = year).div(10**8)
+    #plot the population data
     pop_fig = df_population.plot.line(title = 'Population vs. Time', grid = True)
     df_population.index = pd.to_datetime(df_population.index)
     positions = [p.year for p in df_population.index if p.month == 1]
@@ -492,13 +501,16 @@ if __name__ == "__main__":
     pop_fig.grid(axis = 'x')
     plt.show()    
     df_price_down = downsample(df_price, int(df_population.index[0].year), int(df_population.index[-1].year))
-    #get correlation
+    
+    #derive the correlation
     pop_cor = get_correlate(df_price_down, df_population) 
     print('Correlation of populations:', pop_cor)
-    #build the map
+    
+    #build the correlation map
     pop_corr_map = create_corr_map(pop_cor)
     title = 'Correlation of \nPopulation vs. Gas Price'
     create_heatmap(pop_corr_map, plt.cm.Blues, title)
-    #%%
+    
+    #build the bar graph
     bar_chart=corr_bar(import_cor,vehicle_cor,pop_cor)    
 
