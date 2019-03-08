@@ -182,7 +182,7 @@ if __name__ == "__main__":
     plt.title('Gas Price Forecasting')
     plt.xlabel('Year')
     plt.ylabel("Gas Price per gallon ($/gal)")
-    plt.grid(True)
+    plt.grid(axis = 'y')
     plt.legend()
     plt.show()
 #    plt.savefig('./forecasting60.png')

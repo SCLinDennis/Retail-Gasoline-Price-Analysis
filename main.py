@@ -378,7 +378,7 @@ if __name__ == "__main__":
     #plot figure
     
     # price_fig = df_price.plot.line(title = 'Retail Gas Price v.s. Time')#1993~Apr, 2019~Feb
-    price_fig = df_price.rolling(12).mean().plot.line(title= 'Retail Gas Price vs. Time', grid = True)
+    price_fig = df_price.rolling(12).mean().plot.line(title= 'Retail Gas Price vs. Time')
     df_price.index = pd.to_datetime(df_price.index)
     start_year = df_price.index[0].year
     end_year = df_price.index[-1].year
@@ -397,9 +397,9 @@ if __name__ == "__main__":
     price_fig.set_xticklabels(positions)
     price_fig.set_xlabel("Year")
     price_fig.set_ylabel("Gas Price per gallon ($/gal)")
-    plt.autoscale()
+    price_fig.grid(axis = 'y')
     plt.show()
-    import_fig = df_import.rolling(12).mean().plot.line(title = 'Imports of Crude Oil vs. Time', grid = True)
+    import_fig = df_import.rolling(12).mean().plot.line(title = 'Imports of Crude Oil vs. Time')
     df_import.index = pd.to_datetime(df_import.index)
     positions = []
     for p in df_import.index:
@@ -415,6 +415,7 @@ if __name__ == "__main__":
     import_fig.set_xticklabels(positions)
     import_fig.set_xlabel("Year")
     import_fig.set_ylabel("Barrels per day (thousands)")
+    import_fig.grid(axis = 'y')
     plt.show() 
     #save figure    
     # price_fig.savefig('price.png')
@@ -452,6 +453,7 @@ if __name__ == "__main__":
     ve_fig.set_xticklabels(positions)    
     ve_fig.set_xlabel("Year")
     ve_fig.set_ylabel("Vehicles (100 millions)")    
+    ve_fig.grid(axis = 'x')
     plt.show()    
     df_price_down = downsample(df_price, int(df_vehicle.index[0].year), int(df_vehicle.index[-1].year))
     vehicle_cor = get_correlate(df_price_down, df_vehicle)    
@@ -486,6 +488,7 @@ if __name__ == "__main__":
     pop_fig.set_xticklabels(positions)    
     pop_fig.set_xlabel("Year")
     pop_fig.set_ylabel("Population (100 millions)")
+    pop_fig.grid(axis = 'x')
     plt.show()    
     df_price_down = downsample(df_price, int(df_population.index[0].year), int(df_population.index[-1].year))
     #get correlation
