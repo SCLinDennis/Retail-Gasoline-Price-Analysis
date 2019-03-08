@@ -476,7 +476,7 @@ if __name__ == "__main__":
     ve_fig.set_xticklabels(positions)    
     ve_fig.set_xlabel("Year")
     ve_fig.set_ylabel("Vehicles (100 millions)")    
-    ve_fig.legend(bbox_to_anchor=(1,0.5))
+    ve_fig.legend(bbox_to_anchor=(1,1))
     plt.show()    
     df_price_down = downsample(df_price, int(df_vehicle.index[0].year), int(df_vehicle.index[-1].year))
     
@@ -502,7 +502,7 @@ if __name__ == "__main__":
     pop_fig.set_xticklabels(positions)    
     pop_fig.set_xlabel("Year")
     pop_fig.set_ylabel("Population (100 millions)")
-    pop_fig.legend(bbox_to_anchor=(1,0.5))
+    pop_fig.legend(bbox_to_anchor=(1,1))
     plt.show()    
     df_price_down = downsample(df_price, int(df_population.index[0].year), int(df_population.index[-1].year))
     
