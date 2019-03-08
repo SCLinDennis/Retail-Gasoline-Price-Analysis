@@ -304,6 +304,7 @@ def corr_bar(import_cor,vehicle_cor,pop_cor):
     ax.set_title('Comparison of Correlations')
     ax.set_xticks(ind)
     ax.set_xticklabels(region)
+    ax.grid(axis = 'y')
     ax.legend()
     
     
