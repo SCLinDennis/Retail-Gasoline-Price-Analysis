@@ -11,8 +11,8 @@ matplotlib.use('TkAgg')
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt 
-from mpl_toolkits.basemap import Basemap
-from matplotlib.colorbar import ColorbarBase
+# from mpl_toolkits.basemap import Basemap
+#from matplotlib.colorbar import ColorbarBase
 from matplotlib.colors import rgb2hex
 from matplotlib.patches import Polygon
 from pyquery import PyQuery as pq
@@ -337,7 +337,7 @@ def load_vehicle(num_year):
     for year_i in range(num_year):
         year.append(str(1997+year_i))
         npy_file = "./vehicle/dic_{}.npy".format(year_i + 1997)
-        tmp_array = name_process(np.load(npy_file))
+        tmp_array = name_process(np.load(npy_file, allow_pickle = True))
         new_vehicle = np.array(tmp_array).reshape([1, -1]) 
         if year_i == 0:
             vehicles = new_vehicle
@@ -455,7 +455,7 @@ if __name__ == "__main__":
     #build the correlation map
     import_corr_map = create_corr_map(import_cor)
     title = 'Correlation of \nImports vs. Gas Price'
-    create_heatmap(import_corr_map, plt.cm.Oranges, title)
+#    create_heatmap(import_corr_map, plt.cm.Oranges, title)
 
     #%%
     #load the vehicles data
@@ -487,7 +487,7 @@ if __name__ == "__main__":
     #build the map
     vehicle_corr_map = create_corr_map(vehicle_cor)
     title = 'Correlation of \nVehicle Registrations vs. Gas Price'
-    create_heatmap(vehicle_corr_map, plt.cm.Greens, title)    
+#    create_heatmap(vehicle_corr_map, plt.cm.Greens, title)    
     
     #%%
     #load the populations data    
@@ -513,7 +513,7 @@ if __name__ == "__main__":
     #build the correlation map
     pop_corr_map = create_corr_map(pop_cor)
     title = 'Correlation of \nPopulation vs. Gas Price'
-    create_heatmap(pop_corr_map, plt.cm.Blues, title)
+#    create_heatmap(pop_corr_map, plt.cm.Blues, title)
     
     #build the bar graph
     bar_chart=corr_bar(import_cor,vehicle_cor,pop_cor)    
